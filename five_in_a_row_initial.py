@@ -15,9 +15,11 @@ class Pos():
 
 class Settings():
     def __init__(self):
-        self.screen_width = 1200
-        self.screen_height = 1200
+        self.screen_width = 1000
+        self.screen_height = 1000
         self.bg_color = (120, 60, 80)
+        self.font = pygame.font.SysFont("comicsansms", 72)
+        self.hint = pygame.font.SysFont("comicsansms", 30)
 
 
 class Chess():
@@ -75,18 +77,18 @@ class Board():
             self.board_copy[pos.x][pos.y].lt = self.board_copy[pos.x - 1][pos.y - 1].lt
             i += 1
         i = 1
-        while pos.y + i < self.width and pos.x + i < self.width and self.chess_board[pos.x][pos.y + i] == chess.sign:
+        while pos.y + i < self.width and pos.x + i < self.width and self.chess_board[pos.x + i][pos.y + i] == chess.sign:
             self.board_copy[pos.x + i][pos.y + i].lt += 1
             self.board_copy[pos.x][pos.y].lt = self.board_copy[pos.x + 1][pos.y + 1].lt
             i += 1
         # right top to left bot
         i = 1
-        while pos.y + i < self.width and pos.x - i >= 0 and self.chess_board[pos.x - i][pos.y - i] == chess.sign:
+        while pos.y + i < self.width and pos.x - i >= 0 and self.chess_board[pos.x - i][pos.y + i] == chess.sign:
             self.board_copy[pos.x - i][pos.y + i].rt += 1
             self.board_copy[pos.x][pos.y].rt = self.board_copy[pos.x - 1][pos.y + 1].rt
             i += 1
         i = 1
-        while pos.y - i >= 0 and pos.x + i < self.width and self.chess_board[pos.x][pos.y + i] == chess.sign:
+        while pos.y - i >= 0 and pos.x + i < self.width and self.chess_board[pos.x + i][pos.y - i] == chess.sign:
             self.board_copy[pos.x + i][pos.y - i].rt += 1
             self.board_copy[pos.x][pos.y].rt = self.board_copy[pos.x + 1][pos.y + 1].rt
             i += 1
@@ -96,6 +98,7 @@ class Board():
         return False
 
     def update(self, chess, pos):
+
         if pos.x < 0 or pos.y < 0 or pos.x >= self.width or pos.y >= self.width:
             return
         if chess.sign == 1 and self.chess_board[pos.x][pos.y] == 0:
@@ -113,6 +116,12 @@ def main():
     settings = Settings()
     screen = pygame.display.set_mode((
         settings.screen_height, settings.screen_width))
+    font = settings.font
+    hint = settings.hint
+    black_win_text = font.render("Black win", True, (0, 0, 0))
+    white_win_text = font.render("White win", True, (255, 255, 255))
+    hint_text = hint.render("r to restart, q to quit", True, (90, 180, 50))
+    turn_text = hint.render("Waiting for ", True, (200, 140, 100))
     board = Board(int(settings.screen_width / 60))
     running = True
     flag = 1
@@ -120,21 +129,37 @@ def main():
     while running:
         screen.fill(settings.bg_color)
         color = (255, 255, 255)
-        one_color = (255, 255, 255)
-        another_color = (0, 0, 0)
+        white = (255, 255, 255)
+        black = (0, 0, 0)
         i = 0
-        while i < board.width:
+        while i <= board.width:
             pygame.draw.line(screen, color, (i*60, 0), (i*60, board.width*60))
             pygame.draw.line(screen, color, (0, i*60), (board.width*60, i*60))
             i += 1
+        screen.blit(
+            turn_text, (50, board.width*60+10))
+        if flag == 1:
+            pygame.draw.rect(screen, black, (180, board.width*60+5, 30, 30))
+        else:
+            pygame.draw.rect(screen, white, (180, board.width*60+5, 30, 30))
         for i in range(len(board.chess_board)):
             for j in range(len(board.chess_board[i])):
                 if(board.chess_board[i][j] == 1):
-                    pygame.draw.rect(screen, one_color,
+                    pygame.draw.rect(screen, white,
                                      (i*60+1, j*60+1, 59, 59))
                 elif (board.chess_board[i][j] == -1):
-                    pygame.draw.rect(screen, another_color,
+                    pygame.draw.rect(screen, black,
                                      (i*60+1, j*60+1, 59, 59))
+        if winning == True:
+            screen.blit(
+                hint_text, (settings.screen_height - 200, settings.screen_width - 200))
+            if flag == 1:
+                screen.blit(
+                    white_win_text, (settings.screen_height / 2 - 100, settings.screen_width / 2 - 100))
+            else:
+                screen.blit(
+                    black_win_text, (settings.screen_height / 2 - 100, settings.screen_width / 2 - 100))
+
         waiting = True
         pygame.display.update()
         while winning:
