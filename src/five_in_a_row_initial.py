@@ -90,11 +90,11 @@ def main():
             for i in range(len(board.chess_board)):
                 for j in range(len(board.chess_board[i])):
                     if(board.chess_board[i][j] == 1):
-                        pygame.draw.rect(screen, white,
-                                         (i*60+1, j*60+1, 59, 59))
+                        pygame.draw.circle(screen, white,
+                                         (i*60+30, j*60+30), 29)
                     elif (board.chess_board[i][j] == -1):
-                        pygame.draw.rect(screen, black,
-                                         (i*60+1, j*60+1, 59, 59))
+                        pygame.draw.circle(screen, black,
+                                           (i * 60 + 30, j * 60 + 30), 29)
             if winning == True:
                 screen.fill(settings.bg_color)
                 screen.blit(
