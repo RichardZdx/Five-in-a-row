@@ -7,6 +7,27 @@ from board import Board
 import draw_board
 
 
+def get_conti(chess, board, i, j):
+    if i + 1 < board.width and board.chess_board[i + 1][j] == chess.sign:
+        chess.vert = board.board_copy[i + 1][j].vert + 1
+    if i - 1 >= 0 and board.chess_board[i - 1][j] == chess.sign:
+        chess.vert += board.board_copy[i - 1][j].vert
+    if j + 1 < board.width and board.chess_board[i][j + 1] == chess.sign:
+        chess.hori = board.board_copy[i][j + 1].hori + 1
+    if j - 1 >= 0 and board.chess_board[i][j - 1] == chess.sign:
+        chess.hori += board.board_copy[i][j - 1].hori
+    if j + 1 < board.width and i + 1 < board.width and board.chess_board[i + 1][j + 1] == chess.sign:
+        chess.lt = board.board_copy[i +
+                                    1][j + 1].lt + 1
+    if j - 1 >= 0 and i - 1 >= 0 and board.chess_board[i - 1][j - 1] == chess.sign:
+        chess.lt += board.board_copy[i - 1][j - 1].lt
+    if j + 1 < board.width and i - 1 >= 0 and board.chess_board[i - 1][j + 1] == chess.sign:
+        chess.rt = board.board_copy[i -
+                                    1][j + 1].rt + 1
+    if j - 1 >= 0 and i + 1 < board.width and board.chess_board[i + 1][j - 1] == chess.sign:
+        chess.rt += board.board_copy[i + 1][j - 1].rt
+
+
 def main():
     pygame.init()
     settings = Settings()
@@ -91,7 +112,7 @@ def main():
                 for j in range(len(board.chess_board[i])):
                     if(board.chess_board[i][j] == 1):
                         pygame.draw.circle(screen, white,
-                                         (i*60+30, j*60+30), 29)
+                                           (i*60+30, j*60+30), 29)
                     elif (board.chess_board[i][j] == -1):
                         pygame.draw.circle(screen, black,
                                            (i * 60 + 30, j * 60 + 30), 29)
@@ -179,11 +200,8 @@ def main():
                             tmp_own_board = copy.deepcopy(board)
                             tmp_ene_board = copy.deepcopy(board)
                             tmp_pos = Pos(i, j)
-                            tmp_ene_board.detect_conti(
-                                tmp_pos, viturl_enemy_chess)
-                            tmp_own_board.detect_conti(
-                                tmp_pos, viturl_own_chess)
-
+                            get_conti(viturl_own_chess, tmp_own_board, i, j)
+                            get_conti(viturl_enemy_chess, tmp_ene_board, i, j)
                             own_hor = viturl_own_chess.hori
                             own_ver = viturl_own_chess.vert
                             own_lt = viturl_own_chess.lt
