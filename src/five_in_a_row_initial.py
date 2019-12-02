@@ -28,6 +28,19 @@ def get_conti(chess, board, i, j):
         chess.rt += board.board_copy[i + 1][j - 1].rt
 
 
+def get_extensive(board, chess):
+    vert_ex = min(chess.top_ex, chess.bot_ex)
+    hori_ex = min(chess.left_ex, chess.right_ex)
+    lt_ex = min(chess.lt_ex, chess.rb_ex)
+    rt_ex = min(chess.rt_ex, chess.lb_ex)
+    ver_ratio = float(vert_ex) / float(len(board.chess_board))
+    hori_ratio = float(hori_ex) / float(len(board.chess_board))
+    lt_ratio = float(lt_ex) / float(len(board.chess_board))
+    rt_ratio = float(rt_ex) / float(len(board.chess_board))
+    extensive = ver_ratio + ver_ratio + lt_ratio + rt_ratio
+    return extensive
+
+
 def main():
     pygame.init()
     settings = Settings()
@@ -173,17 +186,17 @@ def main():
                         if result is not None:
                             waiting = False
             if ai_working:
-                viturl_own_chess_sample = Chess()
-                viturl_enemy_chess_sample = Chess()
+                virtual_own_chess_sample = Chess()
+                virtual_enemy_chess_sample = Chess()
                 real_chess = Chess()
                 if default_chess == -1:
                     real_chess.set_to_black()
-                    viturl_own_chess_sample.set_to_black()
-                    viturl_enemy_chess_sample.set_to_white()
+                    virtual_own_chess_sample.set_to_black()
+                    virtual_enemy_chess_sample.set_to_white()
                 else:
                     real_chess.set_to_white()
-                    viturl_own_chess_sample.set_to_white()
-                    viturl_enemy_chess_sample.set_to_black()
+                    virtual_own_chess_sample.set_to_white()
+                    virtual_enemy_chess_sample.set_to_black()
                 max_own_point = 0
                 max_ene_point = 0
                 pos_own_x = 0
@@ -193,27 +206,34 @@ def main():
                 for i in range(len(board.chess_board)):
                     for j in range(len(board.chess_board[i])):
                         if board.chess_board[i][j] == 0:
-                            viturl_enemy_chess = copy.deepcopy(
-                                viturl_enemy_chess_sample)
-                            viturl_own_chess = copy.deepcopy(
-                                viturl_own_chess_sample)
+                            virtual_enemy_chess = copy.deepcopy(
+                                virtual_enemy_chess_sample)
+                            virtual_own_chess = copy.deepcopy(
+                                virtual_own_chess_sample)
                             tmp_own_board = copy.deepcopy(board)
                             tmp_ene_board = copy.deepcopy(board)
                             tmp_pos = Pos(i, j)
-                            get_conti(viturl_own_chess, tmp_own_board, i, j)
-                            get_conti(viturl_enemy_chess, tmp_ene_board, i, j)
-                            own_hor = viturl_own_chess.hori
-                            own_ver = viturl_own_chess.vert
-                            own_lt = viturl_own_chess.lt
-                            own_rt = viturl_own_chess.rt
-                            ene_hor = viturl_enemy_chess.hori
-                            ene_ver = viturl_enemy_chess.vert
-                            ene_lt = viturl_enemy_chess.lt
-                            ene_rt = viturl_enemy_chess.rt
+                            tmp_own_board.detect_conti(
+                                tmp_pos, virtual_own_chess)
+                            tmp_ene_board.detect_conti(
+                                tmp_pos, virtual_enemy_chess)
+                            own_hor = virtual_own_chess.hori
+                            own_ver = virtual_own_chess.vert
+                            own_lt = virtual_own_chess.lt
+                            own_rt = virtual_own_chess.rt
+                            ene_hor = virtual_enemy_chess.hori
+                            ene_ver = virtual_enemy_chess.vert
+                            ene_lt = virtual_enemy_chess.lt
+                            ene_rt = virtual_enemy_chess.rt
+                            own_exten = get_extensive(board, virtual_own_chess)
+                            ene_exten = get_extensive(
+                                board, virtual_enemy_chess)
                             own_value = weight_own[own_hor] + weight_own[own_ver] + \
                                 weight_own[own_rt] + weight_own[own_lt]
                             ene_value = weight_ene[ene_hor] + weight_ene[ene_ver] + \
                                 weight_ene[ene_rt] + weight_ene[ene_lt]
+                            own_value += own_exten
+                            ene_value += ene_exten
                             if own_value > max_own_point:
                                 max_own_point = own_value
                                 pos_own_x = i

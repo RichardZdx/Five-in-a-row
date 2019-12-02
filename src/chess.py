@@ -5,6 +5,14 @@ class Chess():
         self.lt = 1
         self.rt = 1
         self.sign = 0
+        self.top_ex = 0
+        self.bot_ex = 0
+        self.left_ex = 0
+        self.right_ex = 0
+        self.lt_ex = 0
+        self.rb_ex = 0
+        self.rt_ex = 0
+        self.lb_ex = 0
 
     def set_to_black(self):
         self.sign = -1
