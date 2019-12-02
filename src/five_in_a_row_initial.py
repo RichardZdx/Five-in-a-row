@@ -1,5 +1,7 @@
 import pygame
 import copy
+import random
+from time import sleep
 from chess import Chess
 from settings import Settings
 from settings import Pos
@@ -55,6 +57,7 @@ def main():
     board = Board(int(settings.screen_width / 60))
     running = True
     flag = 1
+    pos = Pos(-1, -1)
     winning = False
     mode = 0
     color = (255, 255, 255)
@@ -125,10 +128,28 @@ def main():
                 for j in range(len(board.chess_board[i])):
                     if(board.chess_board[i][j] == 1):
                         pygame.draw.circle(screen, white,
-                                           (i*60+30, j*60+30), 29)
+                                           (i * 60 + 30, j * 60 + 30), 29)
                     elif (board.chess_board[i][j] == -1):
                         pygame.draw.circle(screen, black,
                                            (i * 60 + 30, j * 60 + 30), 29)
+            if winning == False and pos.x != -1:
+                i = pos.x
+                j = pos.y
+                for count in range(10):
+                    r = random.randint(0, 255)
+                    g = random.randint(0, 255)
+                    b = random.randint(0, 250)
+                    chess_color = (r, g, b)
+                    pygame.draw.circle(screen, chess_color,
+                                       (i * 60 + 30, j * 60 + 30), 29)
+                    pygame.display.update()
+                    sleep(0.1)
+                if board.chess_board[i][j] == 1:
+                    pygame.draw.circle(screen, white,
+                                       (i * 60 + 30, j * 60 + 30), 29)
+                else:
+                    pygame.draw.circle(screen, black,
+                                       (i * 60 + 30, j * 60 + 30), 29)
             if winning == True:
                 screen.fill(settings.bg_color)
                 screen.blit(
