@@ -82,7 +82,7 @@ def main():
                         running = False
                 elif event.type == pygame.MOUSEBUTTONUP:
                     x, y = pygame.mouse.get_pos()
-                    if x >= 180 and x <= 280 and y >= board.width*30+5 and y <= board.width*30+55:
+                    if x >= board.width * 11 and x <= board.width * 11 + 100 and y >= board.width*30+5 and y <= board.width*30+55:
                         if chess_choosing == False:
                             mode = 0
                             mode_choosing = False
@@ -94,7 +94,7 @@ def main():
                             default_chess = -1
                             break
 
-                    elif x >= 680 and x <= 780 and y >= board.width*30+5 and y <= board.width*30+55:
+                    elif x >= board.width * 42 and x <= board.width * 42 + 100 and y >= board.width*30+5 and y <= board.width*30+55:
                         if chess_choosing == False:
                             mode = 1
                             mode_choosing = False
@@ -117,13 +117,13 @@ def main():
                                  (board.width*60, i*60))
                 i += 1
             screen.blit(
-                turn_text, (50, board.width*60+10))
+                turn_text, (board.width * 3, board.width*60+10))
             if flag == 1:
                 pygame.draw.rect(
-                    screen, black, (180, board.width*60+5, 30, 30))
+                    screen, black, (board.width * 11, board.width*60+5, 30, 30))
             else:
                 pygame.draw.rect(
-                    screen, white, (180, board.width*60+5, 30, 30))
+                    screen, white, (board.width * 11, board.width*60+5, 30, 30))
             for i in range(len(board.chess_board)):
                 for j in range(len(board.chess_board[i])):
                     if(board.chess_board[i][j] == 1):
